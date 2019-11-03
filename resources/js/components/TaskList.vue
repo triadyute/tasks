@@ -3,41 +3,49 @@
         <h1>Add Task</h1>
         <div class="row">
             <form @submit.prevent="addTask()" class="form-inline small">
-                <div class="form-group mx-sm-3 mb-2">
+                <div class="form-group mx-sm-3">
                     <label for="name" class="sr-only">Name</label>
-                    <input type="input" class="form-control" id="name" placeholder="Name" v-model="name">
+                    <input type="input" class="form-control" id="name" placeholder="Name" v-model="task.name">
                 </div>
-                <div class="form-group mx-sm-3 mb-2">
+                <div class="form-group mx-sm-3">
                     <label for="priority" class="sr-only">Priority</label>
-                    <select name="" id="" class="form-control">
+                    <select v-model="task.priority" class="form-control">
                         <option selected disabled>Priority</option>
-                        <option>Normal</option>
-                        <option>High</option>
-                        <option>Urgent</option>
+                        <option value="0">Normal</option>
+                        <option value="1">High</option>
+                        <option value="2">Urgent</option>
                     </select>
                 </div>
-`               <div class="form-group mx-sm-3">
-                    <button type="submit" class="btn btn-success mb-2">Save task</button>
-                </div>`
+                <div class="form-group mx-sm-3">
+                    <button type="submit" class="btn btn-success">Save task</button>
+                </div>
             </form>
         </div>
         <h1 class="mt-5">Tasks</h1>
         <div class="row">
-            <div class="col-md-5">
+            <div class="col-md-6">
+                <transition name="fade">
+                    <flash-message class="myCustomClass"></flash-message>
+                </transition>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
                 <label for="projects">Sort tasks by project</label>
-                <select name="" id="" class="form-control mb-3">
+                <select id="" class="form-control mb-3">
                     <option value="" selected disabled>Select Project</option>
                 </select>
                 <table class="table border">
                     <thead>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Status</th>
                         <th>Priority</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </thead>
-                    <tbody>
-                        <tr  v-for="task in tasks" v-bind:key="task.id">
+                    <tbody is="transition-group">
+
+                        <tr  v-for="task in tasks" :key="task.id">
                             <td>
                                 {{task.id}}
                             </td>
@@ -57,7 +65,7 @@
                                 <button class="btn btn-sm btn-light" v-if="task.completed == true" disabled>Done</button>
                             </td>
                             <td>
-                                <button class="btn btn-secondary"><i class="fa fa-trash fa-sm"></i> Delete</button>
+                                <button class="btn btn-secondary" @click="deleteTask(task)"><i class="fa fa-trash fa-sm"></i> Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -72,8 +80,10 @@
         data() {
             return {
                 tasks:[],
-                name: '',
-                priority: 0
+                task:{
+                    name: '',
+                    priority: 0
+                }
             }
         },
         mounted() {
@@ -88,19 +98,33 @@
                 }).catch(err => {
                     console.log(err)
                 });
-
             },
             addTask(){
-                axios.post('/api/task', {
-                    name: this.name,
-                    priority: this.priority
+
+                    axios.post('/api/task', this.task)
+                .then(savedTask => {
+                    this.tasks.push(savedTask);
+                    this.getTasks();
                 })
-                .then(function (response) {
-                    console.log(response);
-                })
-                .catch(function (error) {
-                    currentObj.output = error;
-                });  
+                .catch(err => {
+                    console.log(err)
+                });
+            },
+            deleteTask(task){
+                if (confirm('Are you sure')) {
+                axios.delete('/api/task/' + task.id )
+                .then(
+                    this.getTasks(),
+                    this.flash('Task deleted', 'success',{
+                        timeout:3000
+                    })
+                    )
+                .catch(err => {
+                    console.log(err)
+                });
+
+                //console.log(task);
+                }
             }
         },
         created() {

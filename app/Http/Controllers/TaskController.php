@@ -18,6 +18,19 @@ class TaskController extends Controller
     }
 
     public function store(Request $request){
-        return response()->json([$request->all()]);
+        //dd(request()->all());
+        $task = Task::create();
+        $task->project_id = 1;
+        $task->name = $request->name;
+        $task->priority = $request->priority;
+        //return $task;
+        $task->save();
+        return response()->json($task);
+    }
+
+    public function destroy(Request $request, Task $task){
+        $task->delete();
+        return response()->json($task);
+
     }
 }
