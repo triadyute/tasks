@@ -39,7 +39,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-7" v-if="Object.keys(tasks).length != 0">
                 <label for="projects">Sort tasks by project</label>
                 <select id="" class="form-control mb-3">
                     <option value="" selected disabled>Select Project</option>
@@ -67,7 +67,7 @@
                             </td>
                             <td>
                                 <toggle-button
-                                :value="task.completed"
+                                :value="Boolean(task.completed)"
                                 :labels="{checked: 'Yes', unchecked: 'No'}"
                                 @change="updateTask(task)">
                                 </toggle-button>
@@ -79,6 +79,9 @@
                     </tbody>
                 </table>
             </div>
+             <div v-else class="col-md-6">
+                 <p>No tasks to show</p>
+             </div>
         </div>
     </div>
 </template>
@@ -142,8 +145,9 @@
             updateTask(task){
                     axios.put('/api/task/' + task.id, task)
                     .then(
-                        task.completed = true,
-                        console.log(task),
+                        this.task = task,
+                        this.task.completed = !this.task.completed,
+                        console.log(this.task),
                         this.getTasks(),
                         this.flash('Task updated', 'success',{
                             timeout:5000

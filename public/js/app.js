@@ -1929,6 +1929,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 // Import component
  // Import stylesheet
 
@@ -1990,7 +1993,7 @@ __webpack_require__.r(__webpack_exports__);
       }, 2000);
     },
     updateTask: function updateTask(task) {
-      axios.put('/api/task/' + task.id, task).then(task.completed = true, console.log(task), this.getTasks(), this.flash('Task updated', 'success', {
+      axios.put('/api/task/' + task.id, task).then(this.task = task, this.task.completed = !this.task.completed, console.log(this.task), this.getTasks(), this.flash('Task updated', 'success', {
         timeout: 5000
       }))["catch"](function (err) {
         console.log(err);
@@ -39062,92 +39065,96 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-md-7" }, [
-          _c("label", { attrs: { for: "projects" } }, [
-            _vm._v("Sort tasks by project")
-          ]),
-          _vm._v(" "),
-          _vm._m(1),
-          _vm._v(" "),
-          _c("table", { staticClass: "table border" }, [
-            _vm._m(2),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              { attrs: { transition: "fade-transition" } },
-              _vm._l(_vm.tasks, function(task) {
-                return _c("tr", { key: task.id }, [
-                  _c("td", [
-                    _vm._v(
-                      "\n                            " +
-                        _vm._s(task.id) +
-                        "\n                        "
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _vm._v(
-                      "\n                            " +
-                        _vm._s(task.name) +
-                        "\n                        "
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [
-                    task.priority == 0
-                      ? _c("span", [_vm._v("Normal")])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    task.priority == 1
-                      ? _c("span", [_vm._v("High")])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    task.priority == 2
-                      ? _c("span", [_vm._v("Urgent")])
-                      : _vm._e()
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "td",
-                    [
-                      _c("toggle-button", {
-                        attrs: {
-                          value: task.completed,
-                          labels: { checked: "Yes", unchecked: "No" }
-                        },
-                        on: {
-                          change: function($event) {
-                            return _vm.updateTask(task)
-                          }
-                        }
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-secondary",
-                        on: {
-                          click: function($event) {
-                            return _vm.deleteTask(task)
-                          }
-                        }
-                      },
-                      [
-                        _c("i", { staticClass: "fa fa-trash fa-sm" }),
-                        _vm._v(" Delete")
-                      ]
-                    )
-                  ])
-                ])
-              }),
-              0
-            )
-          ])
-        ])
+        Object.keys(_vm.tasks).length != 0
+          ? _c("div", { staticClass: "col-md-7" }, [
+              _c("label", { attrs: { for: "projects" } }, [
+                _vm._v("Sort tasks by project")
+              ]),
+              _vm._v(" "),
+              _vm._m(1),
+              _vm._v(" "),
+              _c("table", { staticClass: "table border" }, [
+                _vm._m(2),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  { attrs: { transition: "fade-transition" } },
+                  _vm._l(_vm.tasks, function(task) {
+                    return _c("tr", { key: task.id }, [
+                      _c("td", [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(task.id) +
+                            "\n                        "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(task.name) +
+                            "\n                        "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [
+                        task.priority == 0
+                          ? _c("span", [_vm._v("Normal")])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        task.priority == 1
+                          ? _c("span", [_vm._v("High")])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        task.priority == 2
+                          ? _c("span", [_vm._v("Urgent")])
+                          : _vm._e()
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "td",
+                        [
+                          _c("toggle-button", {
+                            attrs: {
+                              value: Boolean(task.completed),
+                              labels: { checked: "Yes", unchecked: "No" }
+                            },
+                            on: {
+                              change: function($event) {
+                                return _vm.updateTask(task)
+                              }
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("td", [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-secondary",
+                            on: {
+                              click: function($event) {
+                                return _vm.deleteTask(task)
+                              }
+                            }
+                          },
+                          [
+                            _c("i", { staticClass: "fa fa-trash fa-sm" }),
+                            _vm._v(" Delete")
+                          ]
+                        )
+                      ])
+                    ])
+                  }),
+                  0
+                )
+              ])
+            ])
+          : _c("div", { staticClass: "col-md-6" }, [
+              _c("p", [_vm._v("No tasks to show")])
+            ])
       ])
     ],
     1

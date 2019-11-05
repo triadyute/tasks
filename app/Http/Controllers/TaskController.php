@@ -32,9 +32,9 @@ class TaskController extends Controller
         //dd(request()->all());
         $task->project_id = empty($request->project_id) ? $task->project_id: $request->project_id;
         $task->name = empty($request->name) ? $task->name: $request->name;
+        $task->completed = empty($request->completed) ? $task->completed: $request->completed;
         $task->priority = empty($request->priority) ? $task->priority: $request->priority;
-        $task->completed = empty($request->priority) ? $task->priority: $request->priority;
-        $task->update();
+        $task->save();
         return response()->json($task);
     }
 
