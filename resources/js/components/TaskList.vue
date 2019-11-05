@@ -21,9 +21,9 @@
                                 <label for="priority" class="sr-only">Priority</label>
                                 <select v-model="task.priority" class="form-control mb-3">
                                     <option selected disabled>Priority</option>
-                                    <option value="0">Normal</option>
-                                    <option value="1">High</option>
-                                    <option value="2">Urgent</option>
+                                    <option value="0">Low</option>
+                                    <option value="1">Med</option>
+                                    <option value="2">High</option>
                                 </select>
                 </div>
                 <div class="col-md-2">
@@ -61,9 +61,11 @@
                                 {{task.name}}
                             </td>
                             <td>
-                                <span v-if="task.priority == 0">Normal</span>
-                                <span v-if="task.priority == 1">High</span>
-                                <span v-if="task.priority == 2">Urgent</span>
+                                <select name="" id="priority_dropdown" :class="priorityClasses(task)" @change="updateTask(task)">
+                                    <option value="0" :selected="task.priority == 0">Low</option>
+                                    <option value="1" :selected="task.priority == 1">Med</option>
+                                    <option value="2" :selected="task.priority == 2">High</option>
+                                </select>
                             </td>
                             <td>
                                 <toggle-button
@@ -89,10 +91,13 @@
 <script>
     // Import component
     import Loading from 'vue-loading-overlay';
-    // Import stylesheet
     import 'vue-loading-overlay/dist/vue-loading.css';
     //Toggle button
-    import { ToggleButton } from 'vue-js-toggle-button'
+    import { ToggleButton } from 'vue-js-toggle-button';
+    //Vue toasted
+    import Toasted from 'vue-toasted';
+    Vue.use(Toasted);
+
     export default {
         data() {
             return {
@@ -102,8 +107,9 @@
                     priority: 0,
                     completed: false
                 },
+                //Vue loader options
                 isLoading: false,
-                fullPage: true
+                fullPage: true,
             }
         },
         components: {
@@ -131,9 +137,6 @@
                         this.task.name = '';
                         this.task.priority = 0;
                         this.getTasks();
-                        this.flash('Task added', 'success',{
-                        timeout:5000,
-                        })
                     })
                     .catch(err => {
                         console.log(err)
@@ -141,6 +144,15 @@
                     setTimeout(() => {
                     this.isLoading = false
                     },2000);
+
+                    setTimeout(function(){               
+                        let toast = Vue.toasted.success( "Task added successfully", { 
+                            theme: "toasted-primary", 
+                            position: "top-left", 
+                            duration : 3000,
+                            fitToScreen: true
+                        });
+                    }, 2000);
             },
             updateTask(task){
                     axios.put('/api/task/' + task.id, task)
@@ -149,14 +161,12 @@
                         this.task.completed = !this.task.completed,
                         console.log(this.task),
                         this.getTasks(),
-                        this.flash('Task updated', 'success',{
-                            timeout:5000
-                            })
+                        this.task.name = '',
+                        this.task.priority = 0,
                     )
                     .catch(err => {
                         console.log(err)
                     });
-                    alert('task updated')
             },
             deleteTask(task){
                 this.isLoading = true;
@@ -164,10 +174,7 @@
                 {
                     axios.delete('/api/task/' + task.id )
                     .then(
-                        this.getTasks(),
-                        this.flash('Task deleted', 'success',{
-                            timeout:5000
-                            })
+                        this.getTasks()
                         )
                     .catch(err => {
                         console.log(err)
@@ -176,7 +183,28 @@
                 setTimeout(() => {
                 this.isLoading = false
                 },2000);
+
+                setTimeout(function(){               
+                    let toast = Vue.toasted.success( "Task deleted successfully", { 
+                        theme: "toasted-primary", 
+                        position: "top-left", 
+                        duration : 3000,
+                        fitToScreen: true
+                    });
+                }, 2000);
+            },
+                    //Priority css classes
+            priorityClasses(task){
+                if(task.priority == 0){
+                    return "btn low"
                 }
+                else if(task.priority == 1){
+                    return "btn med"
+                }
+                else{
+                    return "btn high"
+                }
+            },
         },
         created() {
             this.getTasks();

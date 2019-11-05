@@ -11142,3 +11142,39 @@ select.btn-mini + .caret {
   margin-bottom: 1em;
 }
 
+#priority_dropdown {
+  -webkit-appearance: button;
+     -moz-appearance: button;
+          appearance: button;
+  font-size: 0.8em;
+  padding: 2px;
+}
+
+.low {
+  background-color: lightgrey;
+}
+
+.med {
+  background-color: orange;
+  color: white;
+}
+
+.high {
+  background-color: red;
+  color: white;
+}
+
+option {
+  background-color: white;
+  font-size: 0.9em;
+}
+
+option:hover {
+  background-color: lightgrey;
+}
+
+.toast {
+  background-color: white;
+  color: black;
+}
+

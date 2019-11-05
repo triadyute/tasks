@@ -36,3 +36,37 @@ select.btn-mini + .caret {
 }
 
 .mobile-margin { margin-bottom: 1em; }
+
+#priority_dropdown{
+    appearance: button;
+    font-size: .8em;
+    padding: 2px;
+}
+
+.low{
+    background-color: lightgrey;
+}
+
+.med{
+    background-color: orange;
+    color: white;
+}
+
+.high{
+    background-color: red;
+    color: white;
+}
+
+option{
+    background-color: white;
+    font-size: .9em;
+}
+
+option:hover{
+    background-color: lightgrey;
+}
+
+.toast{
+    background-color: white;
+    color: black;
+}

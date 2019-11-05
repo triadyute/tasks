@@ -17,7 +17,7 @@
 
 <body class="d-flex flex-column h-100">
     <div id="app">
-        <tasks-header></tasks-header>
+        {{-- <tasks-header></tasks-header> --}}
         <!-- Begin page content -->
         <main role="main" class="flex-shrink-0">
                 @yield('content')
