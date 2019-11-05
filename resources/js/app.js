@@ -7,8 +7,10 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+
 window.axios = require('axios')
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
 import VueFlashMessage from 'vue-flash-message';
 Vue.use(VueFlashMessage);
 require('vue-flash-message/dist/vue-flash-message.min.css');

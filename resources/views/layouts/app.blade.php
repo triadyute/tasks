@@ -20,9 +20,7 @@
         <tasks-header></tasks-header>
         <!-- Begin page content -->
         <main role="main" class="flex-shrink-0">
-            <div class="container">
                 @yield('content')
-            </div>
         </main>
     </div>
     <script src="{{asset('/js/app.js')}}"></script>

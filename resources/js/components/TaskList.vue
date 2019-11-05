@@ -1,36 +1,45 @@
 <template>
-    <div>
+    <div class="container">
+        <loading :active.sync="isLoading" :is-full-page="fullPage"></loading>
         <h1>Add Task</h1>
-        <div class="row">
-            <form @submit.prevent="addTask()" class="form-inline small">
-                <div class="form-group mx-sm-3">
-                    <label for="name" class="sr-only">Name</label>
-                    <input type="input" class="form-control" id="name" placeholder="Name" v-model="task.name">
+            <form @submit.prevent="addTask()" class="small">
+            <div class="row">
+                <div class="col-md-3">
+                <select id="" class="form-control mb-3" @change="alert('clicked!')">
+                    <option value="" selected disabled>Select Project</option>
+                    <option value="">Project 1</option>
+                    <option value="">Project 2</option>
+                </select>
                 </div>
-                <div class="form-group mx-sm-3">
-                    <label for="priority" class="sr-only">Priority</label>
-                    <select v-model="task.priority" class="form-control">
-                        <option selected disabled>Priority</option>
-                        <option value="0">Normal</option>
-                        <option value="1">High</option>
-                        <option value="2">Urgent</option>
-                    </select>
+            </div>
+            <div class="row">
+                <div class="col-md-3">  
+                                <label for="name" class="sr-only">Name</label>
+                                <input type="input" class="form-control mb-3" id="name" placeholder="Name" v-model="task.name">
                 </div>
-                <div class="form-group mx-sm-3">
-                    <button type="submit" class="btn btn-success">Save task</button>
+                <div class="col-md-2">
+                                <label for="priority" class="sr-only">Priority</label>
+                                <select v-model="task.priority" class="form-control mb-3">
+                                    <option selected disabled>Priority</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">High</option>
+                                    <option value="2">Urgent</option>
+                                </select>
                 </div>
+                <div class="col-md-2">
+                <button type="submit" class="btn btn-success">Save task</button>
+                </div>
+            </div>
             </form>
-        </div>
-        <h1 class="mt-5">Tasks</h1>
+
+        <h1 class="mt-4">Tasks</h1>
         <div class="row">
-            <div class="col-md-6">
-                <transition name="fade">
+            <div class="col-md-6">  
                     <flash-message class="myCustomClass"></flash-message>
-                </transition>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-7">
                 <label for="projects">Sort tasks by project</label>
                 <select id="" class="form-control mb-3">
                     <option value="" selected disabled>Select Project</option>
@@ -40,11 +49,10 @@
                         <th>ID</th>
                         <th>Name</th>
                         <th>Priority</th>
-                        <th>Status</th>
+                        <th>Completed</th>
                         <th>Actions</th>
                     </thead>
-                    <tbody is="transition-group">
-
+                    <tbody transition="fade-transition">
                         <tr  v-for="task in tasks" :key="task.id">
                             <td>
                                 {{task.id}}
@@ -58,11 +66,11 @@
                                 <span v-if="task.priority == 2">Urgent</span>
                             </td>
                             <td>
-                                <select v-if="task.completed == false" name="" id="" class="btn btn-mini btn-success">
-                                    <option selected disabled>Not done</option>
-                                    <option>Done</option>
-                                </select>
-                                <button class="btn btn-sm btn-light" v-if="task.completed == true" disabled>Done</button>
+                                <toggle-button
+                                :value="task.completed"
+                                :labels="{checked: 'Yes', unchecked: 'No'}"
+                                @change="updateTask(task)">
+                                </toggle-button>
                             </td>
                             <td>
                                 <button class="btn btn-secondary" @click="deleteTask(task)"><i class="fa fa-trash fa-sm"></i> Delete</button>
@@ -76,15 +84,28 @@
 </template>
 
 <script>
+    // Import component
+    import Loading from 'vue-loading-overlay';
+    // Import stylesheet
+    import 'vue-loading-overlay/dist/vue-loading.css';
+    //Toggle button
+    import { ToggleButton } from 'vue-js-toggle-button'
     export default {
         data() {
             return {
                 tasks:[],
                 task:{
                     name: '',
-                    priority: 0
-                }
+                    priority: 0,
+                    completed: false
+                },
+                isLoading: false,
+                fullPage: true
             }
+        },
+        components: {
+            Loading,
+            ToggleButton
         },
         mounted() {
             console.log('Component mounted.')
@@ -100,32 +121,58 @@
                 });
             },
             addTask(){
-
+                    this.isLoading = true;
                     axios.post('/api/task', this.task)
-                .then(savedTask => {
-                    this.tasks.push(savedTask);
-                    this.getTasks();
-                })
-                .catch(err => {
-                    console.log(err)
-                });
+                    .then(savedTask => {
+                        this.tasks.push(savedTask);
+                        this.task.name = '';
+                        this.task.priority = 0;
+                        this.getTasks();
+                        this.flash('Task added', 'success',{
+                        timeout:5000,
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    });
+                    setTimeout(() => {
+                    this.isLoading = false
+                    },2000);
+            },
+            updateTask(task){
+                    axios.put('/api/task/' + task.id, task)
+                    .then(
+                        task.completed = true,
+                        console.log(task),
+                        this.getTasks(),
+                        this.flash('Task updated', 'success',{
+                            timeout:5000
+                            })
+                    )
+                    .catch(err => {
+                        console.log(err)
+                    });
+                    alert('task updated')
             },
             deleteTask(task){
-                if (confirm('Are you sure')) {
-                axios.delete('/api/task/' + task.id )
-                .then(
-                    this.getTasks(),
-                    this.flash('Task deleted', 'success',{
-                        timeout:3000
-                    })
-                    )
-                .catch(err => {
-                    console.log(err)
-                });
-
-                //console.log(task);
+                this.isLoading = true;
+                if (confirm('Are you sure'))
+                {
+                    axios.delete('/api/task/' + task.id )
+                    .then(
+                        this.getTasks(),
+                        this.flash('Task deleted', 'success',{
+                            timeout:5000
+                            })
+                        )
+                    .catch(err => {
+                        console.log(err)
+                        });
                 }
-            }
+                setTimeout(() => {
+                this.isLoading = false
+                },2000);
+                }
         },
         created() {
             this.getTasks();

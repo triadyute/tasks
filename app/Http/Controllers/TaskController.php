@@ -28,6 +28,16 @@ class TaskController extends Controller
         return response()->json($task);
     }
 
+    public function update(Request $request, Task $task){
+        //dd(request()->all());
+        $task->project_id = empty($request->project_id) ? $task->project_id: $request->project_id;
+        $task->name = empty($request->name) ? $task->name: $request->name;
+        $task->priority = empty($request->priority) ? $task->priority: $request->priority;
+        $task->completed = empty($request->priority) ? $task->priority: $request->priority;
+        $task->update();
+        return response()->json($task);
+    }
+
     public function destroy(Request $request, Task $task){
         $task->delete();
         return response()->json($task);

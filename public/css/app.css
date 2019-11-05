@@ -11101,7 +11101,7 @@ a.text-dark:focus {
 }
 
 h1 {
-  font-size: 1.75em;
+  font-size: 1.5em;
   font-weight: bold;
 }
 
@@ -11136,5 +11136,9 @@ select.btn {
 select.btn-mini + .caret {
   margin-left: -20px;
   margin-top: 9px;
+}
+
+.mobile-margin {
+  margin-bottom: 1em;
 }
 
