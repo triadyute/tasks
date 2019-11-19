@@ -4,15 +4,6 @@
         <h1>Add Task</h1>
             <form @submit.prevent="addTask()" class="small">
             <div class="row">
-                <div class="col-md-3">
-                <select id="" class="form-control mb-3" @change="alert('clicked!')">
-                    <option value="" selected disabled>Select Project</option>
-                    <option value="">Project 1</option>
-                    <option value="">Project 2</option>
-                </select>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-md-3">  
                                 <label for="name" class="sr-only">Name</label>
                                 <input type="input" class="form-control mb-3" id="name" placeholder="Name" v-model="task.name">
@@ -39,7 +30,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-7" v-if="Object.keys(tasks).length != 0">
+            <div class="col-md-8" v-if="Object.keys(tasks).length != 0">
                 <label for="projects">Sort tasks by project</label>
                 <select id="" class="form-control mb-3">
                     <option value="" selected disabled>Select Project</option>
@@ -49,10 +40,11 @@
                         <th>ID</th>
                         <th>Name</th>
                         <th>Priority</th>
+                        <th>Timestamp</th>
                         <th>Completed</th>
                         <th>Actions</th>
                     </thead>
-                    <tbody transition="fade-transition">
+                    <draggable v-model="tasks" tag="tbody">
                         <tr  v-for="task in tasks" :key="task.id">
                             <td>
                                 {{task.id}}
@@ -60,12 +52,17 @@
                             <td>
                                 {{task.name}}
                             </td>
+                            <td class="low" v-if="task.priority == 0">
+                                Low
+                            </td>
+                            <td class="med" v-if="task.priority == 1">
+                                Med
+                            </td>
+                            <td class="high" v-if="task.priority == 2">
+                                High
+                            </td>
                             <td>
-                                <select name="" id="priority_dropdown" :class="priorityClasses(task)" @change="updateTask(task)">
-                                    <option value="0" :selected="task.priority == 0">Low</option>
-                                    <option value="1" :selected="task.priority == 1">Med</option>
-                                    <option value="2" :selected="task.priority == 2">High</option>
-                                </select>
+                                {{task.created_at | moment("calendar")}}
                             </td>
                             <td>
                                 <toggle-button
@@ -78,7 +75,7 @@
                                 <button class="btn btn-secondary" @click="deleteTask(task)"><i class="fa fa-trash fa-sm"></i> Delete</button>
                             </td>
                         </tr>
-                    </tbody>
+                    </draggable>
                 </table>
             </div>
              <div v-else class="col-md-6">
@@ -92,11 +89,19 @@
     // Import component
     import Loading from 'vue-loading-overlay';
     import 'vue-loading-overlay/dist/vue-loading.css';
+
     //Toggle button
     import { ToggleButton } from 'vue-js-toggle-button';
+
     //Vue toasted
     import Toasted from 'vue-toasted';
     Vue.use(Toasted);
+
+    //Moment js
+    Vue.use(require('vue-moment'));
+
+    //Vue Draggable
+    import draggable from 'vuedraggable'
 
     export default {
         data() {
@@ -110,11 +115,13 @@
                 //Vue loader options
                 isLoading: false,
                 fullPage: true,
+                showForm: false
             }
         },
         components: {
             Loading,
-            ToggleButton
+            ToggleButton,
+            draggable
         },
         mounted() {
             console.log('Component mounted.')

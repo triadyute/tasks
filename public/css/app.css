@@ -11124,6 +11124,10 @@ select.btn-mini {
   font-size: 0.8em;
 }
 
+.btn-success {
+  background-color: #4cbb17;
+}
+
 /* this is optional (see below) */
 
 select.btn {
@@ -11151,30 +11155,23 @@ select.btn-mini + .caret {
 }
 
 .low {
-  background-color: lightgrey;
+  color: #4cbb17;
 }
 
 .med {
-  background-color: orange;
-  color: white;
+  color: orange;
 }
 
 .high {
-  background-color: red;
-  color: white;
+  color: #ff0000;
 }
 
 option {
-  background-color: white;
+  background-color: #ffffff;
   font-size: 0.9em;
 }
 
 option:hover {
-  background-color: lightgrey;
-}
-
-.toast {
-  background-color: white;
-  color: black;
+  background-color: #d3d3d3;
 }
 
